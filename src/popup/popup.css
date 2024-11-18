@@ -2,8 +2,12 @@ body {
     width: 300px;
     max-height: min(70%, 800px);
     text-align: center;
+    
     background-color: #111;
     color: #FFF;
+
+    border: none;
+    box-shadow: 0px 0px 5px black;
 }
 
 ul {
@@ -107,7 +111,7 @@ ul {
 .tabBar {
     width: 100%;
     height: 45px;
-    border-bottom: rgba(255, 255, 255, 0.5) solid 1px;
+    /* border-bottom: rgba(255, 255, 255, 0.5) solid 1px; */
     /* border-top: rgba(255, 255, 255, 0.5) solid 1px; */
     backdrop-filter: brightness(1.05);
 
@@ -117,26 +121,26 @@ ul {
     justify-content: end;
 
     gap: 1px;
-}
 
-.tabBar > button {
-    height: 90%;
-    flex-grow: 1;
-    border: none;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-
-    border-radius: 10px 10px 0px 0px;
-
-    transition: height 0.125s;
+    & > button {
+        height: 90%;
+        flex-grow: 1;
+        border: none;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
     
-    /* &:not(:last-child) { */
-        /* border-right: rgba(255, 255, 255, 0.25) solid 1px;
-    } */
-
-    &.activeTabButton {
-        background-color: rgba(255, 255, 255, 0.2);
-        height: 100%;
+        border-radius: 10px 10px 0px 0px;
+    
+        transition: height 0.125s;
+        
+        /* &:not(:last-child) { */
+            /* border-right: rgba(255, 255, 255, 0.25) solid 1px;
+        } */
+    
+        &.activeTabButton {
+            background-color: rgba(255, 255, 255, 0.2);
+            height: 100%;
+        }
     }
 }
 
@@ -144,6 +148,8 @@ ul {
     width: 100%;
     flex-grow: 1;
     height: max-content;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 0px 0px 10px 10px;
 }
 
 .tab {
@@ -152,5 +158,31 @@ ul {
 
     &.activeTab {
         display: block;
+    }
+}
+
+#whatsNewSection {
+    display: flex;
+    flex-flow: column nowrap;
+    
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    & > article {
+        background-color: rgba(255, 255, 255, 0.1);
+        width: 90%;
+        border-radius: 7px;
+        padding: 10px;
+    
+        &::before {
+            content: attr(version);
+            width: 100%;
+            text-align: left;
+            margin-left: 7px;
+            font-weight: bold;
+            color: white;
+        }
     }
 }

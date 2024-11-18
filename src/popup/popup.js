@@ -136,8 +136,6 @@ const applyTheme = (theme) => {
     if (isExtension()) {
         chrome.storage.local.set({ "PASSPORT_THEME": JSON.stringify(cssKeys) }).then(() => {
             console.log("Saved theme")
-        }).except((e) => {
-            console.warn("Could not save theme", e)
         });
     }
 } 
@@ -216,10 +214,7 @@ const initializeColorButtons = () => {
                 console.log("Found nothing stored")
                 makeColorButtons(themes.Default.toCSSVariables());
             }
-        }).except((e) => {
-            console.warn("Error fetching theme, defaulting")
-            makeColorButtons(themes.Default.toCSSVariables());
-        })
+        });
     } else {
         makeColorButtons(themes.Default.toCSSVariables());
     }
