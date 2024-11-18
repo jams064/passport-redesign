@@ -13,12 +13,12 @@
 	"content_scripts": [
 		{
 			"matches": ["*://portal.besd.net/Passport/*"],
-			"css": ["src/background/content.css"]
+			"css": ["background/content.css"]
 		}
 	],
 
 	"background": {
-		"service_worker": "src/background/service-worker.js",
+		"service_worker": "background/service-worker.js",
 		"type": "module"
 	},
 
