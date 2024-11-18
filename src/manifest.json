@@ -3,7 +3,9 @@
 
 	"name": "Passport Refresh",
 	"description": "Refresh the look of BESD's Passport with custom color themes!",
-	"icons": {},
+	"icons": {
+		"128": "icons/default128.png"
+	},
 	"author": {
 		"email": "joshaw.0648@gmail.com"
 	},

@@ -199,3 +199,41 @@ section.contact div.article div > span {
     background-color: var(--link-color);
     color: var(--content-color);
 }
+
+.container.first:has(> .body-container > .body > #divLoginContainer) {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.body {
+    background-color: var(--background-color) !important; 
+}
+
+#formactionLogin {
+    background-color: var(--background-color) !important;
+    box-shadow: 0px 0px 6px var(--content-color2);
+    
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#formactionLogin > * {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+}
+
+#formactionLogin #btnSubmit {
+    /* background: none !important; */
+    background: var(--color1) !important;
+}
+
+#formactionLogin .input_field {
+    background-color: var(--background-color2) !important;
+    color: var(--content-color) !important;
+}
+
+.darkorange2 H1 {
+    border-color: var(--content-color) !important;
+}
