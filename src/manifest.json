@@ -3,6 +3,10 @@
 
 	"name": "Passport Refresh",
 	"description": "Description here",
+	"icons": {},
+	"author": {
+		"email": "joshaw.0648@gmail.com"
+	},
 
 	"version": "0.0.2",
 
@@ -12,9 +16,12 @@
 			"css": ["src/background/content.css"]
 		}
 	],
-	
+
 	"background": {
-      "service_worker": "src/background/service-worker.js",
-      "type": "module"
-    }
+		"service_worker": "src/background/service-worker.js",
+		"type": "module"
+	},
+
+	"permissions": ["scripting", "tabs", "storage"],
+	"optional_host_permissions": ["*://portal.besd.net/Passport/*"]
 }
