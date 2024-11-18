@@ -93,7 +93,7 @@ const applyTheme = (theme) => {
 
     applyPopupTheme(theme);
 
-    chrome.tabs.query({url: "*://portal.besd.net/*"}).then((tabs) => {
+    chrome.tabs.query({url: "*://portal.besd.net/Passport/*"}).then((tabs) => {
         tabs.forEach(tab => {
             chrome.scripting.executeScript({
                 target: {tabId: tab.id},

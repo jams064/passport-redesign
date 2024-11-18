@@ -1,0 +1,20 @@
+{
+	"manifest_version": 3,
+
+	"name": "Passport Refresh",
+	"description": "Description here",
+
+	"version": "0.0.2",
+
+	"content_scripts": [
+		{
+			"matches": ["*://portal.besd.net/Passport/*"],
+			"css": ["src/background/content.css"]
+		}
+	],
+	
+	"background": {
+      "service_worker": "src/background/service-worker.js",
+      "type": "module"
+    }
+}
