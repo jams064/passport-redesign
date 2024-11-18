@@ -8,27 +8,38 @@
     <body>
         <div id="app">
             <h1>Passport Refresh</h1>
-            <section>
-                <h2>Choose Theme</h2>
-                <ul id="themeList">
-                    
-                </ul>
-            </section>
-            <section>
-                <h2>Custom Theme</h2>
-                <ul id="colorList">
-                    
-                </ul>
-            </section>
-            <hr>
-            <h3>What's new</h3>
-            <p>Uploaded to webstore!</p>
-            <hr>
-            <h3>Issues</h3>
-            <ul>
-                <li>Flashing on page reload</li>
-                <li>Footer sometimes floating</li>
-            </ul>
+            <div class="tabBar">
+                <button id="themeTab">Theme</button>
+                <button id="infoTab">Info</button>
+                <button id="functionsTab">Functions</button>
+            </div>
+            <div class="tabContainer">
+                <div class="tab" id="themeTab">
+                    <section>
+                        <h2>Choose Theme</h2>
+                        <ul id="themeList">
+                            
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Custom Theme</h2>
+                        <ul id="colorList">
+                            
+                        </ul>
+                    </section>
+                </div>
+                <div class="tab" id="infoTab">
+                    <h3>What's new</h3>
+                    <p>Uploaded to webstore!</p>
+                    <hr>
+                    <h3>Issues</h3>
+                    <ul>
+                        <li>Flashing on page reload</li>
+                        <li class="fixed">Footer sometimes floating</li>
+                    </ul>
+                </div>
+                <div class="tab" id="functionsTab"></div>
+            </div>
         </div>
         <script src="./popup.js"></script>
     </body>

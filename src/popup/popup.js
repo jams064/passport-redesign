@@ -1,3 +1,8 @@
+// Useful for debugging
+const isExtension = () => {
+    return window.chrome && chrome.runtime && chrome.runtime.id;
+}
+
 // CSS functions and macros
 const rgb = (r, g, b) => {
     return `rgb(${r}, ${g}, ${b})`;
@@ -102,36 +107,40 @@ const applyTheme = (theme) => {
     applyPopupTheme(theme);
 
     // Get all open passport tabs
-    chrome.tabs.query({url: "*://portal.besd.net/Passport/*"}).then((tabs) => {
-        // Loop through all the tabs
-        tabs.forEach(tab => {
-            // Execute the script that applies the theme on the tab
-            chrome.scripting.executeScript({
-                target: {tabId: tab.id},
-                args: [cssKeys],
-                func: (theme) => {
-                    // Get document stylesheet
-                    const styles = document.documentElement.style;
-
-                    // Loop through theme keys and apply to page
-                    for (const [key, value] of Object.entries(theme)) {
-                        styles.setProperty(key, value, "important");
+    if (isExtension()) {
+        chrome.tabs.query({url: "*://portal.besd.net/Passport/*"}).then((tabs) => {
+            // Loop through all the tabs
+            tabs.forEach(tab => {
+                // Execute the script that applies the theme on the tab
+                chrome.scripting.executeScript({
+                    target: {tabId: tab.id},
+                    args: [cssKeys],
+                    func: (theme) => {
+                        // Get document stylesheet
+                        const styles = document.documentElement.style;
+    
+                        // Loop through theme keys and apply to page
+                        for (const [key, value] of Object.entries(theme)) {
+                            styles.setProperty(key, value, "important");
+                        }
+    
+                        // Log the change
+                        console.log("Applied theme:", theme);
                     }
-
-                    // Log the change
-                    console.log("Applied theme:", theme);
-                }
-            })
+                })
+            });
         });
-    });
+    }
 
     // Save theme to local storage
-    chrome.storage.local.set({ "PASSPORT_THEME": JSON.stringify(cssKeys) }).then(() => {
-        console.log("Saved theme")
-    }).except((e) => {
-        console.error("Could not save theme", e)
-    });
-}
+    if (isExtension()) {
+        chrome.storage.local.set({ "PASSPORT_THEME": JSON.stringify(cssKeys) }).then(() => {
+            console.log("Saved theme")
+        }).except((e) => {
+            console.warn("Could not save theme", e)
+        });
+    }
+} 
 
 // Function to initialize theme buttons on the popup
 const initializeThemeButtons = () => {
@@ -197,17 +206,74 @@ const makeColorButtons = (startingTheme) => {
 const initializeColorButtons = () => {
     // Fetch saved theme, if it exists then create buttons with that theme
     // else, use the default theme.
-    chrome.storage.local.get("PASSPORT_THEME").then((result) => {
-        if (result?.PASSPORT_THEME) {
-            console.log("Found stored theme", result.PASSPORT_THEME);
-            makeColorButtons(JSON.parse(result.PASSPORT_THEME));
-        } else {
-            console.log("Found nothing stored")
+
+    if (isExtension()) {
+        chrome.storage.local.get("PASSPORT_THEME").then((result) => {
+            if (result?.PASSPORT_THEME) {
+                console.log("Found stored theme", result.PASSPORT_THEME);
+                makeColorButtons(JSON.parse(result.PASSPORT_THEME));
+            } else {
+                console.log("Found nothing stored")
+                makeColorButtons(themes.Default.toCSSVariables());
+            }
+        }).except((e) => {
+            console.warn("Error fetching theme, defaulting")
             makeColorButtons(themes.Default.toCSSVariables());
-        }
-    })
+        })
+    } else {
+        makeColorButtons(themes.Default.toCSSVariables());
+    }
 }
 
 // Call the initialize functions
 initializeThemeButtons();
 initializeColorButtons();
+
+// ## Tab Section ## \\
+
+// Declare starting variables
+let currentTab = "themeTab";
+
+// Function to select tabButton with Id
+const setActiveButton = (tabId) => {
+    const button = document.querySelector(`.tabBar > button#${tabId}`);
+
+    document.querySelector(".activeTabButton")?.classList?.remove("activeTabButton");
+    if (button) {
+        button.classList.add("activeTabButton");
+    }
+}
+
+const setActiveTab = (tabId) => {
+    const tab = document.querySelector(`.tabContainer > .tab#${tabId}`);
+
+    document.querySelector(".activeTab")?.classList?.remove("activeTab");
+    if (tab) {
+        tab.classList.add("activeTab");
+    }
+}
+
+const selectTab = (tabId) => {
+    currentTab = tabId;
+
+    setActiveButton(tabId);
+    setActiveTab(tabId)
+}
+
+const initializeTabButtons = () => {
+    const buttonsQuery = document.querySelectorAll(".tabBar > button");
+    
+    for (let i = 0; i < buttonsQuery.length; i++) {
+        const button = buttonsQuery.item(i);
+
+        button.onclick = () => {
+            selectTab(button.id);
+        }
+    }
+}
+
+// Initialize current tab
+selectTab(currentTab);
+
+// Initialize other stuff
+initializeTabButtons();
