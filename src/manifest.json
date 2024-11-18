@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 
 	"name": "Passport Refresh",
-	"description": "Description here",
+	"description": "Refresh the look of BESD's Passport with custom color themes!",
 	"icons": {},
 	"author": {
 		"email": "joshaw.0648@gmail.com"
@@ -22,6 +22,10 @@
 		"type": "module"
 	},
 
+	"action": {
+   		"default_popup": "popup/popup.html"
+ 	},
+
 	"permissions": ["scripting", "tabs", "storage"],
-	"optional_host_permissions": ["*://portal.besd.net/Passport/*"]
+	"host_permissions": ["*://portal.besd.net/Passport/*"]
 }

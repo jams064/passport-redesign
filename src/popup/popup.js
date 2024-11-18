@@ -1,3 +1,4 @@
+// CSS functions and macros
 const rgb = (r, g, b) => {
     return `rgb(${r}, ${g}, ${b})`;
 }
@@ -7,6 +8,7 @@ const rgba = (r, g, b, a) => {
 const white = "white";
 const black = "black";
 
+// Define theme class
 class Theme {
     Name;
     Data = {};
@@ -27,6 +29,7 @@ class Theme {
     }
 }
 
+// Define themes
 const themes = {
     "Default": new Theme("Default", {
         "background-color": white,
@@ -78,86 +81,122 @@ const themes = {
     })
 }
 
+// Function to apply theme to the extension's popup buttons
 const applyPopupTheme = (theme) => {
+    // Fetch keys from theme
     const cssKeys = theme.toCSSVariables();
 
+    // Get the popup's stylesheet and apply the styles
     const styles = document.documentElement.style;
     for (const [key, value] of Object.entries(cssKeys)) {
         styles.setProperty(key, value, "important");
     }
 }
 
+// Function to send theme data to all passport tabs, aswell as the popup and save to local storage
 const applyTheme = (theme) => {
+    // Get keys from theme
     const cssKeys = theme.toCSSVariables();
-    chrome.storage.local.set({ "PASSPORT_THEME": JSON.stringify(cssKeys) }).then(() => {console.log("Saved theme")});
 
+    // Apply theme to the popup
     applyPopupTheme(theme);
 
+    // Get all open passport tabs
     chrome.tabs.query({url: "*://portal.besd.net/Passport/*"}).then((tabs) => {
+        // Loop through all the tabs
         tabs.forEach(tab => {
+            // Execute the script that applies the theme on the tab
             chrome.scripting.executeScript({
                 target: {tabId: tab.id},
                 args: [cssKeys],
-                func: (keys) => {
-                    const styles = document.querySelector("html").style;
-                    for (const [key, value] of Object.entries(keys)) {
+                func: (theme) => {
+                    // Get document stylesheet
+                    const styles = document.documentElement.style;
+
+                    // Loop through theme keys and apply to page
+                    for (const [key, value] of Object.entries(theme)) {
                         styles.setProperty(key, value, "important");
                     }
-                    console.log("Applied theme:", keys);
+
+                    // Log the change
+                    console.log("Applied theme:", theme);
                 }
             })
         });
     });
+
+    // Save theme to local storage
+    chrome.storage.local.set({ "PASSPORT_THEME": JSON.stringify(cssKeys) }).then(() => {
+        console.log("Saved theme")
+    }).except((e) => {
+        console.error("Could not save theme", e)
+    });
 }
 
+// Function to initialize theme buttons on the popup
 const initializeThemeButtons = () => {
+    // Get the themeList ul element
     const themeList = document.getElementById("themeList");
 
-    for (const [name, theme] of Object.entries(themes)) {
-        // console.log(name, theme);
-
+    // Loop through all themes
+    for (const [_, theme] of Object.entries(themes)) {
+        // Create button elements
         const newLi = document.createElement("li");
         const newButton = document.createElement("button");
         newLi.appendChild(newButton);
 
+        // Set attributes and styles of elements
         newButton.innerHTML = theme.Name;
         newButton.style.backgroundColor = theme.Data["background-color"];
         newButton.style.color = theme.Data["content-color"];
 
+        // Assign the onclick function
         newButton.onclick = () => {
             applyTheme(theme);
         }
 
+        // Append theme button to themeList
         themeList.appendChild(newLi);
     }
 }
 
+// Function to create the color buttons from a startingTheme, each key of the theme has it's buttons that shows the color
 const makeColorButtons = (startingTheme) => {
+    // Get the colorList ul element
     const colorList = document.getElementById("colorList");
 
-    for (const [colorName, color] of Object.entries(startingTheme)) {
-        document.documentElement.style.setProperty(`${colorName}`, color, "important")
+    // Loop through all of the theme's keys and values
+    for (const [propertyName, color] of Object.entries(startingTheme)) {
+        // Set the document's style for the property
+        document.documentElement.style.setProperty(`${propertyName}`, color, "important")
 
+        // Create button elements
         const newLi = document.createElement("li");
         const newButton = document.createElement("button");
         newLi.appendChild(newButton);
 
-        newButton.innerHTML = colorName;
-        newButton.style.backgroundColor = `var(${colorName})`;
+        // Set attributes and styles of elements
+        newButton.innerHTML = propertyName;
+        newButton.style.backgroundColor = `var(${propertyName})`;
         newButton.style.fontWeight = "bold";
         newButton.style.color = "white";
 
-        newButton.id = colorName;
+        newButton.id = propertyName;
 
+        // Assign the onclick function
         newButton.onclick = () => {
-            console.log("Click", colorName);
+            console.log("Click", propertyName);
         }
 
+        // Append color button to colorList
         colorList.appendChild(newLi);
     }
 }
 
+// Function to initialize color theme
 const initializeColorButtons = () => {
+    // Fetch saved theme, if it exists then create buttons with that theme
+    // else, use the default theme.
     chrome.storage.local.get("PASSPORT_THEME").then((result) => {
         if (result?.PASSPORT_THEME) {
             console.log("Found stored theme", result.PASSPORT_THEME);
@@ -169,18 +208,6 @@ const initializeColorButtons = () => {
     })
 }
 
-// const initializePopupTheme = () => {
-//     const currentTheme = undefined;
-//     chrome.storage.local.get("PASSPORT_THEME").then((theme) => {
-//         currentTheme = theme;
-//     })
-
-//     if (currentTheme) {
-//         applyPopupTheme(currentTheme);
-//     } else {
-//         applyPopupTheme(themes.Default);
-//     }
-// }
-
+// Call the initialize functions
 initializeThemeButtons();
 initializeColorButtons();
