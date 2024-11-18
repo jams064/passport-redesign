@@ -206,7 +206,7 @@ ul {
 	gap: 5px;
 }
 
-button.toggleButton {
+button.handledButton {
 	width: 90%;
 	height: 3em;
 
@@ -233,24 +233,26 @@ button.toggleButton {
 		background-color: #222;
 	}
 
-	&::after {
-		content: "";
-		position: absolute;
+	&.toggleButton {
+		&::after {
+			content: "";
+			position: absolute;
 
-		height: 1.5em;
-		width: 1.5em;
+			height: 1.5em;
+			width: 1.5em;
 
-		top: 0.75em;
-		right: 0.75em;
+			top: 0.75em;
+			right: 0.75em;
 
-		border-radius: 100%;
-		background-color: #1a1a1a;
+			border-radius: 100%;
+			background-color: #1a1a1a;
 
-		transition: background-color 0.25s;
-	}
+			transition: background-color 0.25s;
+		}
 
-	&[checked]::after {
-		background-color: rgb(49, 133, 49);
+		&[checked]::after {
+			background-color: rgb(49, 133, 49);
+		}
 	}
 
 	&:disabled {

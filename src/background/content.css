@@ -194,3 +194,8 @@ section.contact div.article div > span {
 #ctl00_ContentBody_epmTrue {
     color: var(--content-color) !important;
 }
+
+#ctl00_ContentBody_btnSaveReports {
+    background-color: var(--link-color);
+    color: var(--content-color);
+}

@@ -86,6 +86,22 @@ const themes = {
 	}),
 };
 
+const executeOnAllPassportTabs = (func, args) => {
+	chrome.tabs
+	.query({ url: "*://portal.besd.net/Passport/*" })
+	.then((tabs) => {
+		// Loop through all the tabs
+		tabs.forEach((tab) => {
+			// Execute the script that applies the theme on the tab
+			chrome.scripting.executeScript({
+				target: { tabId: tab.id },
+				args: args,
+				func: func,
+			});
+		});
+	});
+}
+
 // Function to apply theme to the extension's popup buttons
 const applyPopupTheme = (theme) => {
 	// Fetch keys from theme
@@ -108,30 +124,18 @@ const applyTheme = (theme) => {
 
 	// Get all open passport tabs
 	if (isExtension()) {
-		chrome.tabs
-			.query({ url: "*://portal.besd.net/Passport/*" })
-			.then((tabs) => {
-				// Loop through all the tabs
-				tabs.forEach((tab) => {
-					// Execute the script that applies the theme on the tab
-					chrome.scripting.executeScript({
-						target: { tabId: tab.id },
-						args: [cssKeys],
-						func: (theme) => {
-							// Get document stylesheet
-							const styles = document.documentElement.style;
+		executeOnAllPassportTabs((theme) => {
+			// Get document stylesheet
+			const styles = document.documentElement.style;
 
-							// Loop through theme keys and apply to page
-							for (const [key, value] of Object.entries(theme)) {
-								styles.setProperty(key, value, "important");
-							}
+			// Loop through theme keys and apply to page
+			for (const [key, value] of Object.entries(theme)) {
+				styles.setProperty(key, value, "important");
+			}
 
-							// Log the change
-							console.log("Applied theme:", theme);
-						},
-					});
-				});
-			});
+			// Log the change
+			console.log("Applied theme:", theme);
+		}, [cssKeys])
 	}
 
 	// Save theme to local storage
@@ -285,25 +289,62 @@ initializeTabButtons();
 
 // ## Toggle Buttons Section ## \\
 const handlerFunctions = {
-	personalInfo: (state) => {
-		if (state) {
-		} else {
-		}
+	personalInfo: () => {
+		const personalInformationElements = [
+			"#ctl00_ContentBody_lblDemoName",
+			"#ctl00_ContentBody_lblDemoSchool",
+			"#ctl00_ContentBody_lblDemoSuniq",
+			"#ctl00_ContentBody_lblDemoSSID",
+			"#ctl00_ContentBody_lblDemoGrade",
+			"#ctl00_ContentBody_lblDemoBirthdate",
+			"#ctl00_ContentBody_lblDemoAge",
+
+			"#ctl00_ContentBody_lblDemoAddress",
+			"#ctl00_ContentBody_lblDemoCityStateZip",
+			"#ctl00_ContentBody_lblDemoPhone",
+			"#ctl00_ContentBody_lblDemoEmail",
+
+			"#ctl00_ContentBody_lblLockerNo",
+			"#ctl00_ContentBody_lblAccountBalance",
+
+			"#ctl00_Label1",
+			"#liSchoolLabel",
+
+			"#ctl00_ContentBody_grdMissing",
+			"#ctl00_ContentBody_grdUpcoming",
+
+			"ctl00_ContentBody_lblStudentID",
+
+			".tabs-container"
+		]
+
+		executeOnAllPassportTabs((elements) => {
+			elements.forEach((query) => {
+				const element = document.querySelector(query)
+				if (element) {
+					element.innerHTML = `<span style="color: red;">Hidden</span>`;
+				}
+			})
+		}, [personalInformationElements]);
 	},
 };
 
-const handleButton = (toggleButton) => {
-	const name = toggleButton.getAttribute("name");
+const handleButton = (button) => {
+	const name = button.getAttribute("name");
 
-	toggleButton.onclick = () => {
-		if (!toggleButton.disabled) {
-			toggleButton.toggleAttribute("checked");
-			handlerFunctions[name]?.(toggleButton.checked);
+	button.onclick = () => {
+		if (!button.disabled) {
+			if (button.classList.contains("toggleButton")) {
+				button.toggleAttribute("checked");
+				handlerFunctions[name]?.(button.checked);
+			} else {
+				handlerFunctions[name]?.();
+			}
 		}
 	};
 };
 
-const buttons = document.querySelectorAll(".toggleButton");
+const buttons = document.querySelectorAll(".handledButton");
 for (let i = 0; i < buttons.length; i++) {
 	console.log(buttons);
 	handleButton(buttons.item(i));
