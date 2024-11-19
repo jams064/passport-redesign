@@ -86,6 +86,7 @@ const themes = {
 	}),
 };
 
+// Util function to execute a function on all passport tabs
 const executeOnAllPassportTabs = (func, args) => {
 	chrome.tabs
 	.query({ url: "*://portal.besd.net/Passport/*" })
@@ -253,6 +254,7 @@ const setActiveButton = (tabId) => {
 	}
 };
 
+// Function to set the active tab to tab
 const setActiveTab = (tabId) => {
 	const tab = document.querySelector(`.tabContainer > .tab#${tabId}`);
 
@@ -262,6 +264,7 @@ const setActiveTab = (tabId) => {
 	}
 };
 
+// Combine setActiveButton, setActiveTab, also sets the currentTab variable to tabId
 const selectTab = (tabId) => {
 	currentTab = tabId;
 
@@ -269,6 +272,7 @@ const selectTab = (tabId) => {
 	setActiveTab(tabId);
 };
 
+// Initialize tab buttons from existing
 const initializeTabButtons = () => {
 	const buttonsQuery = document.querySelectorAll(".tabBar > button");
 
@@ -329,9 +333,11 @@ const handlerFunctions = {
 	},
 };
 
+// Handle a handled button
 const handleButton = (button) => {
 	const name = button.getAttribute("name");
 
+	// Register onclick function
 	button.onclick = () => {
 		if (!button.disabled) {
 			if (button.classList.contains("toggleButton")) {
@@ -344,6 +350,7 @@ const handleButton = (button) => {
 	};
 };
 
+// Get all buttons
 const buttons = document.querySelectorAll(".handledButton");
 for (let i = 0; i < buttons.length; i++) {
 	console.log(buttons);
