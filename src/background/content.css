@@ -39,12 +39,19 @@ section.contact > h1 {
     border-radius: 5px !important;
 }
 
+*:has(> .copyright) {
+    padding-bottom: 10vh;
+}
+
 .copyright {
-    position: sticky;
+    position: fixed;
     bottom: 0px;
+
     border: none !important;
     color: var(--content-color2) !important;
     background-color: var(--color3) !important;
+
+    z-index: 10;
 }
 
 .Grid {
