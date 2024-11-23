@@ -244,3 +244,15 @@ section.contact div.article div > span {
 .darkorange2 H1 {
     border-color: var(--content-color) !important;
 }
+
+.popup_block {
+    background-color: var(--background-color) !important;
+
+    & * {
+        color: var(--content-color) !important;
+    }
+
+    & .GridHead {
+        background-color: var(--tab-color) !important;
+    }
+}

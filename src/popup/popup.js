@@ -356,3 +356,37 @@ for (let i = 0; i < buttons.length; i++) {
 	console.log(buttons);
 	handleButton(buttons.item(i));
 }
+
+// Other
+const initializeIssuesList = async () => {
+	const issuesList = document.querySelector("#issuesList");
+	issuesList.innerHTML = "";
+
+	try {
+		const issuesResponse = await fetch("https://raw.githubusercontent.com/jams064/passport-redesign/refs/heads/main/issues.txt");
+		if (!issuesResponse.ok) {
+			throw new Error(`Response status: ${issuesResponse.status}`);
+		}
+
+		issuesResponse.text().then((text) => {
+			const lines = text.split("\n");
+
+			lines.forEach((line) => {
+				const listItem = document.createElement("li");
+				
+				if (line.startsWith("-") && line.endsWith("-")) {
+					listItem.classList.add("fixed");
+					line = line.substring(1, line.length - 1);
+				}
+
+				listItem.innerHTML = line;
+
+				issuesList.appendChild(listItem);
+			});
+		})
+	} catch (error) {
+		console.error(error.message);
+	}
+}
+
+initializeIssuesList();
