@@ -1,2 +1,3 @@
 Page flashing on reload
 -Footer floating-
+-Attendance / Assignments table colored wrong-
