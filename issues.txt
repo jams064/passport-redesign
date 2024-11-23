@@ -1,2 +1,2 @@
-Page flasing on reload
+Page flashing on reload
 -Footer floating-
