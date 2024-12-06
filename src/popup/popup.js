@@ -3,6 +3,18 @@ const isExtension = () => {
 	return window.chrome && chrome.runtime && chrome.runtime.id;
 };
 
+function toHex(rgb) {
+	if (rgb.search("rgb") == -1) {
+		return rgb;
+	} else {
+		rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+		function hex(x) {
+			return ("0" + parseInt(x).toString(16)).slice(-2);
+		}
+		return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+	}
+}
+
 // CSS functions and macros
 const rgb = (r, g, b) => {
 	return `rgb(${r}, ${g}, ${b})`;
@@ -60,10 +72,10 @@ const themes = {
 		"content-color2": white,
 		"link-color": rgb(79, 118, 169),
 
-		color1: "#999",
-		color2: "#999",
-		color3: "#888",
-		color4: "#777",
+		color1: "#ccc",
+		color2: "#bbb",
+		color3: "#bbb",
+		color4: "#aaa",
 
 		"tab-color": "#DDD",
 		"active-tab-color": "#AAA",
@@ -84,24 +96,40 @@ const themes = {
 		"tab-color": "#333",
 		"active-tab-color": "#444",
 	}),
+	DarkColored: new Theme("Dark Colored", {
+		"background-color": "#222",
+		"background-color2": "#333",
+
+		"content-color": "#EEE",
+		"content-color2": black,
+		"link-color": rgb(90, 110, 180),
+
+		color1: rgb(255, 119, 7),
+		color2: rgb(139, 119, 7),
+		color3: rgb(110, 120, 100),
+		color4: rgb(75, 100, 111),
+
+		"tab-color": rgba(7, 74, 138, 0.5),
+		"active-tab-color": rgba(7, 74, 138, 0.8),
+	}),
 };
 
 // Util function to execute a function on all passport tabs
 const executeOnAllPassportTabs = (func, args) => {
 	chrome.tabs
-	.query({ url: "*://portal.besd.net/Passport/*" })
-	.then((tabs) => {
-		// Loop through all the tabs
-		tabs.forEach((tab) => {
-			// Execute the script that applies the theme on the tab
-			chrome.scripting.executeScript({
-				target: { tabId: tab.id },
-				args: args,
-				func: func,
+		.query({ url: "*://portal.besd.net/Passport/*" })
+		.then((tabs) => {
+			// Loop through all the tabs
+			tabs.forEach((tab) => {
+				// Execute the script that applies the theme on the tab
+				chrome.scripting.executeScript({
+					target: { tabId: tab.id },
+					args: args,
+					func: func,
+				});
 			});
 		});
-	});
-}
+};
 
 // Function to apply theme to the extension's popup buttons
 const applyPopupTheme = (theme) => {
@@ -125,18 +153,21 @@ const applyTheme = (theme) => {
 
 	// Get all open passport tabs
 	if (isExtension()) {
-		executeOnAllPassportTabs((theme) => {
-			// Get document stylesheet
-			const styles = document.documentElement.style;
+		executeOnAllPassportTabs(
+			(theme) => {
+				// Get document stylesheet
+				const styles = document.documentElement.style;
 
-			// Loop through theme keys and apply to page
-			for (const [key, value] of Object.entries(theme)) {
-				styles.setProperty(key, value, "important");
-			}
+				// Loop through theme keys and apply to page
+				for (const [key, value] of Object.entries(theme)) {
+					styles.setProperty(key, value, "important");
+				}
 
-			// Log the change
-			console.log("Applied theme:", theme);
-		}, [cssKeys])
+				// Log the change
+				console.log("Applied theme:", theme);
+			},
+			[cssKeys]
+		);
 	}
 
 	// Save theme to local storage
@@ -157,13 +188,14 @@ const initializeThemeButtons = () => {
 	// Loop through all themes
 	for (const [_, theme] of Object.entries(themes)) {
 		// Create button elements
-		const newLi = document.createElement("li");
 		const newButton = document.createElement("button");
-		newLi.appendChild(newButton);
 
 		// Set attributes and styles of elements
 		newButton.innerHTML = theme.Name;
-		newButton.style.backgroundColor = theme.Data["background-color"];
+
+		const gradientString = `linear-gradient(90deg, ${theme.Data["color1"]} 0%, ${theme.Data["color1"]} 25%, ${theme.Data["background-color"]} 25%, ${theme.Data["background-color"]} 75%, ${theme.Data["color3"]} 75%, ${theme.Data["color3"]} 100%)`;
+		// console.log(gradientString);
+		newButton.style.background = gradientString;
 		newButton.style.color = theme.Data["content-color"];
 
 		// Assign the onclick function
@@ -172,7 +204,7 @@ const initializeThemeButtons = () => {
 		};
 
 		// Append theme button to themeList
-		themeList.appendChild(newLi);
+		themeList.appendChild(newButton);
 	}
 };
 
@@ -191,17 +223,15 @@ const makeColorButtons = (startingTheme) => {
 		);
 
 		// Create button elements
-		const newLi = document.createElement("li");
-		const newButton = document.createElement("button");
-		newLi.appendChild(newButton);
+		const newButton = document.createElement("div");
 
 		// Set attributes and styles of elements
-		newButton.innerHTML = propertyName;
+		newButton.innerHTML = `<p>${propertyName}</p><input type="color">`;
+
 		newButton.style.backgroundColor = `var(${propertyName})`;
-		newButton.style.fontWeight = "bold";
-		newButton.style.color = "white";
 
 		newButton.id = propertyName;
+		newButton.classList.add("colorButton");
 
 		// Assign the onclick function
 		newButton.onclick = () => {
@@ -209,7 +239,7 @@ const makeColorButtons = (startingTheme) => {
 		};
 
 		// Append color button to colorList
-		colorList.appendChild(newLi);
+		colorList.appendChild(newButton);
 	}
 };
 
@@ -232,10 +262,6 @@ const initializeColorButtons = () => {
 		makeColorButtons(themes.Default.toCSSVariables());
 	}
 };
-
-// Call the initialize functions
-initializeThemeButtons();
-initializeColorButtons();
 
 // ## Tab Section ## \\
 
@@ -285,12 +311,6 @@ const initializeTabButtons = () => {
 	}
 };
 
-// Initialize current tab
-selectTab(currentTab);
-
-// Initialize other stuff
-initializeTabButtons();
-
 // ## Toggle Buttons Section ## \\
 const handlerFunctions = {
 	personalInfo: () => {
@@ -319,17 +339,20 @@ const handlerFunctions = {
 
 			"ctl00_ContentBody_lblStudentID",
 
-			".tabs-container"
-		]
+			".tabs-container",
+		];
 
-		executeOnAllPassportTabs((elements) => {
-			elements.forEach((query) => {
-				const element = document.querySelector(query)
-				if (element) {
-					element.innerHTML = `<span style="color: red;">Hidden</span>`;
-				}
-			})
-		}, [personalInformationElements]);
+		executeOnAllPassportTabs(
+			(elements) => {
+				elements.forEach((query) => {
+					const element = document.querySelector(query);
+					if (element) {
+						element.innerHTML = `<span style="color: #ff0000aa;">Hidden</span>`;
+					}
+				});
+			},
+			[personalInformationElements]
+		);
 	},
 };
 
@@ -363,7 +386,9 @@ const initializeIssuesList = async () => {
 	issuesList.innerHTML = "";
 
 	try {
-		const issuesResponse = await fetch("https://raw.githubusercontent.com/jams064/passport-redesign/refs/heads/main/issues.txt");
+		const issuesResponse = await fetch(
+			"https://raw.githubusercontent.com/jams064/passport-redesign/refs/heads/main/issues.txt"
+		);
 		if (!issuesResponse.ok) {
 			throw new Error(`Response status: ${issuesResponse.status}`);
 		}
@@ -373,7 +398,7 @@ const initializeIssuesList = async () => {
 
 			lines.forEach((line) => {
 				const listItem = document.createElement("li");
-				
+
 				if (line.startsWith("-") && line.endsWith("-")) {
 					listItem.classList.add("fixed");
 					line = line.substring(1, line.length - 1);
@@ -383,10 +408,17 @@ const initializeIssuesList = async () => {
 
 				issuesList.appendChild(listItem);
 			});
-		})
+		});
 	} catch (error) {
 		console.error(error.message);
 	}
-}
+};
 
+// Initialize current tab
+selectTab(currentTab);
+
+// Call the initialize functions
+initializeTabButtons();
+initializeThemeButtons();
+initializeColorButtons();
 initializeIssuesList();

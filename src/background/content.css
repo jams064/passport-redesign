@@ -141,6 +141,17 @@ div > a:not(.button):not(.headerBar-title), div > a:not(.button):not(.headerBar-
     background-color: var(--color4) !important;
 }
 
+.GridHead TD {
+    background-color: var(--tab-color) !important;
+}
+
+.button.light {
+    background-color: var(--color1) !important;
+    color: var(--content-color) !important;
+    border: 0px solid transparent !important;
+    border-radius: 7px !important;
+}
+
 /* Content colors */
 
 section.contact > h1, .twelve.columns, .contact {
@@ -175,6 +186,11 @@ p, label:not(#ctl00_ContentBody_lblAccountBalance), h1, h2, h3, h4, h5 {
 
 section.contact div.article div > span {
     color: var(--color2) !important;
+}
+
+.article {
+    display: flex;
+    flex-flow: column;
 }
 
 /* Civics page */
@@ -213,13 +229,13 @@ section.contact div.article div > span {
 }
 
 .body {
-    background-color: var(--background-color) !important; 
+    background-color: var(--background-color) !important;
 }
 
 #formactionLogin {
     background-color: var(--background-color) !important;
     box-shadow: 0px 0px 6px var(--content-color2);
-    
+
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;

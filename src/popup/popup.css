@@ -24,74 +24,6 @@ ul {
 	gap: 5px;
 }
 
-#themeList > li {
-	width: 90%;
-	height: 3em;
-}
-
-#themeList > li > button {
-	text-align: center;
-	border: rgba(255, 255, 255, 0.2) solid 1px;
-
-	width: 100%;
-	height: 100%;
-	background-color: rgba(255, 255, 255, 0.1);
-	color: white;
-	border-radius: 7px;
-
-	cursor: pointer;
-	transition: all 0.1s;
-
-	&:hover {
-		background-color: rgba(255, 255, 255, 0.2);
-		transform: scale(1.0125);
-	}
-
-	&:active {
-		background-color: rgba(255, 255, 255, 0.3);
-		transform: scale(0.9875);
-	}
-}
-
-#colorList > li {
-	width: 90%;
-	height: 3em;
-}
-
-#colorList > li > button {
-	text-align: center;
-	border: rgba(255, 255, 255, 0.2) solid 1px;
-
-	width: 100%;
-	height: 100%;
-	background-color: rgba(255, 255, 255, 0.1);
-	color: white;
-	border-radius: 7px;
-
-	cursor: pointer;
-	transition: all 0.1s;
-
-	-webkit-text-stroke-width: 2px;
-	-webkit-text-stroke-color: rgba(0, 0, 0, 0.2);
-
-	&:hover {
-		background-color: rgba(255, 255, 255, 0.2);
-		transform: scale(1.0125);
-	}
-
-	&:active {
-		background-color: rgba(255, 255, 255, 0.3);
-		transform: scale(0.9875);
-	}
-}
-
-#colorList > li > input {
-	width: 100%;
-	height: 100%;
-	background-color: transparent;
-	border: none;
-}
-
 .fixed {
 	color: rgb(57, 145, 57);
 	text-decoration: line-through;
@@ -206,7 +138,7 @@ ul {
 	gap: 5px;
 }
 
-button.handledButton {
+.handledButton {
 	width: 90%;
 	height: 3em;
 
@@ -257,5 +189,64 @@ button.handledButton {
 
 	&:disabled {
 		filter: brightness(0.8);
+	}
+}
+
+.blur {
+	filter: blur(5px), brightness(0.9);
+}
+
+.hidden {
+	visibility: hidden;
+	display: none;
+}
+
+.buttonList {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+
+	gap: 5px;
+}
+
+.buttonList > * {
+	width: 90%;
+	height: 3em;
+
+	padding: 7px;
+
+	text-align: center;
+
+	border: none;
+	border-radius: 7px;
+
+	&:hover {
+		filter: brightness(0.975);
+	}
+
+	&:active {
+		filter: brightness(1.025);
+	}
+}
+
+.buttonList > .colorButton {
+	text-align: left;
+
+	display: flex;
+	flex-flow: row;
+
+	font-weight: bold;
+	text-shadow: 0px 0px 5px #00000055;
+	font-size: 16px;
+
+	justify-content: space-between;
+	align-items: center;
+
+	& > p {
+		margin: 0px;
+	}
+
+	& > input {
+		height: calc(100% - 14px);
 	}
 }
