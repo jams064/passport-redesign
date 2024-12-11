@@ -20,6 +20,11 @@
 		}
 	],
 
+	"background": {
+		"service_worker": "background/globals.js",
+		"type": "module"
+	},
+
 	"action": {
 		"default_popup": "popup/popup.html"
 	},

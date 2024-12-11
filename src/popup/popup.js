@@ -3,117 +3,6 @@ const isExtension = () => {
 	return window.chrome && chrome.runtime && chrome.runtime.id;
 };
 
-function toHex(rgb) {
-	if (rgb.search("rgb") == -1) {
-		return rgb;
-	} else {
-		rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
-		function hex(x) {
-			return ("0" + parseInt(x).toString(16)).slice(-2);
-		}
-		return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-	}
-}
-
-// CSS functions and macros
-const rgb = (r, g, b) => {
-	return `rgb(${r}, ${g}, ${b})`;
-};
-const rgba = (r, g, b, a) => {
-	return `rgba(${r}, ${g}, ${b}, ${a})`;
-};
-const white = "white";
-const black = "black";
-
-// Define theme class
-class Theme {
-	Name;
-	Data = {};
-
-	constructor(name, data) {
-		this.Name = name;
-		this.Data = data;
-	}
-
-	toCSSVariables() {
-		const vars = {};
-
-		for (const [key, value] of Object.entries(this.Data)) {
-			vars[`--${key}`] = value;
-		}
-
-		return vars;
-	}
-}
-
-// Define themes
-const themes = {
-	Default: new Theme("Default", {
-		"background-color": white,
-		"background-color2": "#EEE",
-
-		"content-color": black,
-		"content-color2": white,
-		"link-color": rgb(79, 118, 169),
-
-		color1: rgb(255, 119, 7),
-		color2: rgb(139, 119, 7),
-		color3: rgb(160, 170, 143),
-		color4: rgb(176, 196, 222),
-
-		"tab-color": rgba(7, 74, 138, 0.5),
-		"active-tab-color": rgba(7, 74, 138, 0.8),
-	}),
-	FlatLight: new Theme("Flat Light", {
-		"background-color": "#FFF",
-		"background-color2": "#EEE",
-
-		"content-color": black,
-		"content-color2": white,
-		"link-color": rgb(79, 118, 169),
-
-		color1: "#ccc",
-		color2: "#bbb",
-		color3: "#bbb",
-		color4: "#aaa",
-
-		"tab-color": "#DDD",
-		"active-tab-color": "#AAA",
-	}),
-	FlatDark: new Theme("Flat Dark", {
-		"background-color": "#111",
-		"background-color2": "#222",
-
-		"content-color": "#EEE",
-		"content-color2": black,
-		"link-color": rgb(90, 110, 180),
-
-		color1: "#222",
-		color2: "#222",
-		color3: "#333",
-		color4: "#444",
-
-		"tab-color": "#333",
-		"active-tab-color": "#444",
-	}),
-	DarkColored: new Theme("Dark Colored", {
-		"background-color": "#222",
-		"background-color2": "#333",
-
-		"content-color": "#EEE",
-		"content-color2": black,
-		"link-color": rgb(90, 110, 180),
-
-		color1: rgb(255, 119, 7),
-		color2: rgb(139, 119, 7),
-		color3: rgb(110, 120, 100),
-		color4: rgb(75, 100, 111),
-
-		"tab-color": rgba(7, 74, 138, 0.5),
-		"active-tab-color": rgba(7, 74, 138, 0.8),
-	}),
-};
-
 // Util function to execute a function on all passport tabs
 const executeOnAllPassportTabs = (func, args) => {
 	chrome.tabs
@@ -145,6 +34,7 @@ const applyPopupTheme = (theme) => {
 
 // Function to send theme data to all passport tabs, aswell as the popup and save to local storage
 const applyTheme = (theme) => {
+	console.log(theme);
 	// Get keys from theme
 	const cssKeys = theme.toCSSVariables();
 
@@ -236,6 +126,28 @@ const makeColorButtons = (startingTheme) => {
 		// Assign the onclick function
 		newButton.onclick = () => {
 			console.log("Click", propertyName);
+		};
+
+		const colorPicker = newButton.querySelector("input");
+
+		colorPicker.value = color;
+		colorPicker.onchange = (e) => {
+			executeOnAllPassportTabs(
+				(propertyName, value) => {
+					document.documentElement.styles.setProperty(
+						propertyName,
+						value,
+						"important"
+					);
+				},
+				[propertyName, colorPicker.value]
+			);
+
+			document.documentElement.style.setProperty(
+				`${propertyName}`,
+				colorPicker.value,
+				"important"
+			);
 		};
 
 		// Append color button to colorList

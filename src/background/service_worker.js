@@ -1,17 +1,4 @@
-// Apply theme function
-const applyTheme = (theme) => {
-	console.log(theme);
-	// Get document stylesheet
-	const styles = document.documentElement.style;
-
-	// Loop through theme keys and apply to page
-	for (const [key, value] of Object.entries(theme)) {
-		styles.setProperty(key, value, "important");
-	}
-
-	// Log the change
-	console.log("Applied theme:", theme);
-};
+import { Theme, Themes, applyTheme } from "./globals";
 
 // Fetch the saved theme from local storage
 chrome.storage.local.get(["PASSPORT_THEME"]).then((data) => {
